@@ -1,0 +1,232 @@
+#!/bin/bash
+# System Tools Information Helper
+# Usage: toolinfo {list|show <tool>|add|edit|category <category>}
+
+INVENTORY="/usr/local/share/doc/system-tools/inventory.json"
+
+# Check if jq is available, fallback to grep/sed
+has_jq() {
+  command -v jq >/dev/null 2>&1
+}
+
+list_tools() {
+  local category="$1"
+  
+  echo "=== Custom Tools Inventory ==="
+  echo ""
+  
+  if has_jq; then
+    if [ -z "$category" ]; then
+      # List all categories
+      local categories=$(jq -r 'keys[] | select(. != "system")' "$INVENTORY")
+      for cat in $categories; do
+        echo "--- $cat ---"
+        jq -r --arg cat "$cat" '.[$cat][]? | "[\\(.name)]
+  Location: \\(.location)
+  Purpose: \\(.purpose)
+  Usage: \\(.usage)
+"' "$INVENTORY"
+      done
+    else
+      # List specific category
+      echo "--- $category ---"
+      jq -r --arg cat "$category" '.[$cat][]? | "[\\(.name)]
+  Location: \\(.location)
+  Purpose: \\(.purpose)
+  Usage: \\(.usage)
+"' "$INVENTORY"
+    fi
+  else
+    echo "Install 'jq' for better formatting: sudo dnf install jq"
+    grep -E '"name"|"location"|"purpose"|"usage"' "$INVENTORY"
+  fi
+}
+
+show_tool() {
+  local tool="$1"
+  
+  if has_jq; then
+    echo "=== $tool Details ==="
+    
+    # Search in all categories
+    local found=false
+    local categories=$(jq -r 'keys[] | select(. != "system")' "$INVENTORY")
+    
+    for cat in $categories; do
+      local result=$(jq -r --arg cat "$cat" --arg tool "$tool" \
+        '.[$cat][]? | select(.name==$tool) | 
+"Category: '"$cat"'
+Name: \\(.name)
+Location: \\(.location)
+Type: \\(.type)
+Language: \\(.language)
+Compiled By: \\(.compiled_by)
+Build Date: \\(.build_date)
+Purpose: \\(.purpose)
+
+Usage: \\(.usage)
+
+Examples:
+\\(.examples | join(\"\\n\"))
+
+Documentation: \\(.documentation)
+
+Notes: \\(.notes)
+"' "$INVENTORY")
+      
+      if [ -n "$result" ]; then
+        echo "$result"
+        found=true
+        break
+      fi
+    done
+    
+    if [ "$found" = false ]; then
+      echo "Tool '$tool' not found in inventory"
+      echo "Available tools:"
+      list_categories
+    fi
+  else
+    echo "Install 'jq' for better formatting: sudo dnf install jq"
+    echo "Showing raw entry for: $tool"
+    grep -A 30 "\"name\": \"$tool\"" "$INVENTORY"
+  fi
+}
+
+list_categories() {
+  if has_jq; then
+    echo "=== Categories ==="
+    jq -r 'keys[] | select(. != "system") as $cat | 
+"[\($cat)]
+  Tools: \([.[$cat][]?.name] | length)
+"' "$INVENTORY"
+  else
+    echo "Install 'jq' for better formatting"
+  fi
+}
+
+show_category() {
+  local cat="$1"
+  if [ -z "$cat" ]; then
+    list_categories
+  else
+    list_tools "$cat"
+  fi
+}
+
+edit_inventory() {
+  if [ -z "$EDITOR" ]; then
+    sudo vi "$INVENTORY"
+  else
+    sudo $EDITOR "$INVENTORY"
+  fi
+}
+
+add_tool_template() {
+  cat << 'TEMPLATE'
+Add this template to inventory.json in any category array (custom_tools, klmhv_tools, system_scripts, etc):
+
+    {
+      "name": "tool-name",
+      "location": "/path/to/binary",
+      "type": "binary|script|service",
+      "language": "go|python|bash|etc",
+      "compiled_by": "username",
+      "build_date": "YYYY-MM-DD",
+      "size_bytes": 0,
+      "portable": true|false,
+      "dependencies": [
+        "dependency1",
+        "dependency2"
+      ],
+      "usage": "command [options] <args>",
+      "purpose": "Brief description",
+      "examples": [
+        "example command 1",
+        "example command 2"
+      ],
+      "documentation": "/path/to/docs",
+      "notes": "Additional information"
+    }
+
+Available categories:
+- custom_tools       : General custom tools
+- klmhv_tools        : KLMHV-specific tools
+- system_scripts     : System automation scripts
+- [create your own]  : Add new category in JSON
+
+Edit with: toolinfo edit
+TEMPLATE
+}
+
+search_tools() {
+  local query="$1"
+  if has_jq; then
+    echo "=== Search Results for '$query' ==="
+    local categories=$(jq -r 'keys[] | select(. != "system")' "$INVENTORY")
+    for cat in $categories; do
+      jq -r --arg cat "$cat" --arg query "$query" \
+        '.[$cat][]? | select(.name | contains($query) or .purpose | contains($query)) | 
+"[\(.name)] (in '"$cat"')
+  Purpose: \(.purpose)
+  Location: \(.location)
+"' "$INVENTORY"
+    done
+  else
+    echo "Search requires jq. Install: sudo dnf install jq"
+  fi
+}
+
+case "$1" in
+  list|ls)
+    list_tools "$2"
+    ;;
+  show|info)
+    if [ -z "$2" ]; then
+      echo "Usage: toolinfo show <tool-name>"
+      exit 1
+    fi
+    show_tool "$2"
+    ;;
+  category|cat)
+    show_category "$2"
+    ;;
+  search)
+    if [ -z "$2" ]; then
+      echo "Usage: toolinfo search <query>"
+      exit 1
+    fi
+    search_tools "$2"
+    ;;
+  edit)
+    edit_inventory
+    ;;
+  add|template)
+    add_tool_template
+    ;;
+  path)
+    echo "$INVENTORY"
+    ;;
+  *)
+    echo "System Tools Information Helper"
+    echo ""
+    echo "Usage:"
+    echo "  toolinfo list [category]       - List all tools or by category"
+    echo "  toolinfo show <tool>           - Show detailed info about a tool"
+    echo "  toolinfo category [name]       - List categories or tools in a category"
+    echo "  toolinfo search <query>        - Search tools by name or purpose"
+    echo "  toolinfo add                   - Show template for adding new tool"
+    echo "  toolinfo edit                  - Edit inventory file"
+    echo "  toolinfo path                  - Show inventory file location"
+    echo ""
+    echo "Inventory: $INVENTORY"
+    echo ""
+    echo "Examples:"
+    echo "  toolinfo list                  - List all tools"
+    echo "  toolinfo list klmhv_tools      - List only KLMHV tools"
+    echo "  toolinfo category              - Show all categories"
+    echo "  toolinfo category klmhv_tools  - List KLMHV tools"
+    echo "  toolinfo show colorfultail     - Show tool details"
+    echo "  toolinfo search backup         - Search for tools"
+    ;;
+esac

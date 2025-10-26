@@ -1,0 +1,5 @@
+# Ignore local test files
+test/
+*.swp
+*.bak
+*~

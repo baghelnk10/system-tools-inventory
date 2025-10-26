@@ -1,0 +1,80 @@
+{
+  "system": {
+    "hostname": "your-hostname",
+    "os": "Linux Distribution",
+    "last_updated": "YYYY-MM-DD",
+    "maintained_by": "your-name"
+  },
+  "custom_tools": [
+    {
+      "name": "example-tool",
+      "location": "/usr/local/bin/example-tool",
+      "type": "binary",
+      "language": "go",
+      "compiled_by": "username",
+      "build_date": "2025-01-01",
+      "size_bytes": 1000000,
+      "portable": true,
+      "dependencies": [
+        "dependency1@version",
+        "dependency2@version"
+      ],
+      "usage": "example-tool [options] <args>",
+      "purpose": "Brief description of what this tool does",
+      "examples": [
+        "example-tool --help",
+        "example-tool --verbose input.txt"
+      ],
+      "documentation": "/usr/local/share/doc/system-tools/example-tool.md",
+      "notes": "Additional information about the tool"
+    }
+  ],
+  "klmhv_tools": [
+    {
+      "name": "klmhv-specific-tool",
+      "location": "/opt/klmhv/bin/tool",
+      "type": "binary",
+      "language": "python",
+      "compiled_by": "klmhv-team",
+      "build_date": "2025-01-01",
+      "size_bytes": 50000,
+      "portable": false,
+      "dependencies": [
+        "python3",
+        "special-library"
+      ],
+      "usage": "klmhv-tool [options]",
+      "purpose": "KLMHV-specific functionality",
+      "examples": [
+        "klmhv-tool --status",
+        "klmhv-tool --config /etc/klmhv/config.yaml"
+      ],
+      "documentation": "/usr/local/share/doc/system-tools/klmhv-tool.md",
+      "notes": "Only for KLMHV systems"
+    }
+  ],
+  "system_scripts": [
+    {
+      "name": "backup-script",
+      "location": "/usr/local/sbin/backup.sh",
+      "type": "script",
+      "language": "bash",
+      "compiled_by": "sysadmin",
+      "build_date": "2025-01-01",
+      "size_bytes": 5000,
+      "portable": true,
+      "dependencies": [
+        "rsync",
+        "tar"
+      ],
+      "usage": "backup.sh [daily|weekly|monthly]",
+      "purpose": "System backup automation",
+      "examples": [
+        "backup.sh daily",
+        "backup.sh weekly /mnt/backup"
+      ],
+      "documentation": "/usr/local/share/doc/system-tools/backup-script.md",
+      "notes": "Runs via cron"
+    }
+  ]
+}
