@@ -197,7 +197,7 @@ Update the `system` section and add your tools to the appropriate categories.
 
 ```bash
 sudo rm /usr/local/bin/toolinfo
-sudo rm -rf /usr/local/share/doc/system-tools
+rm -rf ~/.config/system-tools
 ```
 
 ## Contributing

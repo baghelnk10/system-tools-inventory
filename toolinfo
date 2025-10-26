@@ -2,7 +2,7 @@
 # System Tools Information Helper
 # Usage: toolinfo {list|show <tool>|add|edit|category <category>}
 
-INVENTORY="/usr/local/share/doc/system-tools/inventory.json"
+INVENTORY="$HOME/.config/system-tools/inventory.json"
 
 # Check if jq is available, fallback to grep/sed
 has_jq() {
