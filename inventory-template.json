@@ -25,7 +25,7 @@
         "example-tool --help",
         "example-tool --verbose input.txt"
       ],
-      "documentation": "/usr/local/share/doc/system-tools/example-tool.md",
+      "documentation": "~/.config/system-tools/example-tool.md",
       "notes": "Additional information about the tool"
     }
   ],
@@ -49,7 +49,7 @@
         "klmhv-tool --status",
         "klmhv-tool --config /etc/klmhv/config.yaml"
       ],
-      "documentation": "/usr/local/share/doc/system-tools/klmhv-tool.md",
+      "documentation": "~/.config/system-tools/klmhv-tool.md",
       "notes": "Only for KLMHV systems"
     }
   ],
@@ -73,7 +73,7 @@
         "backup.sh daily",
         "backup.sh weekly /mnt/backup"
       ],
-      "documentation": "/usr/local/share/doc/system-tools/backup-script.md",
+      "documentation": "~/.config/system-tools/backup-script.md",
       "notes": "Runs via cron"
     }
   ]

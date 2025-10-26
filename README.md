@@ -94,7 +94,7 @@ $ toolinfo search backup
 ## File Structure
 
 ```
-/usr/local/share/doc/system-tools/
+~/.config/system-tools/
 ├── inventory.json              # Main inventory file (with categories)
 └── [tool-name]-BUILD.md        # Tool-specific documentation
 
@@ -153,7 +153,7 @@ $ toolinfo search backup
     "colorfultail /var/log/messages",
     "colorfultail -f /var/log/app.log"
   ],
-  "documentation": "/usr/local/share/doc/system-tools/colorfultail-BUILD.md",
+  "documentation": "~/.config/system-tools/colorfultail-BUILD.md",
   "notes": "Statically-linked, portable binary"
 }
 ```
