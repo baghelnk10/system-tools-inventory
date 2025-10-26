@@ -116,9 +116,9 @@ show_category() {
 
 edit_inventory() {
   if [ -z "$EDITOR" ]; then
-    sudo vi "$INVENTORY"
+    vi "$INVENTORY"
   else
-    sudo $EDITOR "$INVENTORY"
+    $EDITOR "$INVENTORY"
   fi
 }
 
