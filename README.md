@@ -16,12 +16,12 @@ A simple JSON-based documentation system for tracking custom tools, binaries, an
 
 ### Quick Install
 ```bash
-curl -sSL https://raw.githubusercontent.com/YOUR_USERNAME/system-tools-inventory/main/install.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/baghelnk10/system-tools-inventory/main/quick-install.sh | sudo bash
 ```
 
 ### Manual Install
 ```bash
-git clone https://github.com/YOUR_USERNAME/system-tools-inventory.git
+git clone https://github.com/baghelnk10/system-tools-inventory.git
 cd system-tools-inventory
 sudo ./install.sh
 ```
