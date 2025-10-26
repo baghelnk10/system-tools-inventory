@@ -2,7 +2,7 @@
 # System Tools Information Helper
 # Usage: toolinfo {list|show <tool>|add|edit|category <category>}
 
-INVENTORY="$HOME/.config/system-tools/inventory.json"
+INVENTORY="${INVENTORY:-$HOME/.config/system-tools/inventory.json}"
 
 # Check if jq is available, fallback to grep/sed
 has_jq() {
@@ -96,12 +96,12 @@ Notes: \(.notes)
 list_categories() {
   if has_jq; then
     echo "=== Categories ==="
-    jq -r 'keys[] | select(. != "system") as $cat | 
+    jq -r '. as $root | keys[] | select(. != "system") as $cat |
 "[\($cat)]
-  Tools: \([.[$cat][]?.name] | length)
+  Tools: \($root[$cat] | length)
 "' "$INVENTORY"
   else
-    echo "Install 'jq' for better formatting"
+    echo "Install ''jq' for better formatting"
   fi
 }
 
