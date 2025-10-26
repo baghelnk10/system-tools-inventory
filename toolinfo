@@ -21,19 +21,19 @@ list_tools() {
       local categories=$(jq -r 'keys[] | select(. != "system")' "$INVENTORY")
       for cat in $categories; do
         echo "--- $cat ---"
-        jq -r --arg cat "$cat" '.[$cat][]? | "[\\(.name)]
-  Location: \\(.location)
-  Purpose: \\(.purpose)
-  Usage: \\(.usage)
+        jq -r --arg cat "$cat" '.[$cat][]? | "[\(.name)]
+  Location: \(.location)
+  Purpose: \(.purpose)
+  Usage: \(.usage)
 "' "$INVENTORY"
       done
     else
       # List specific category
       echo "--- $category ---"
-      jq -r --arg cat "$category" '.[$cat][]? | "[\\(.name)]
-  Location: \\(.location)
-  Purpose: \\(.purpose)
-  Usage: \\(.usage)
+      jq -r --arg cat "$category" '.[$cat][]? | "[\(.name)]
+  Location: \(.location)
+  Purpose: \(.purpose)
+  Usage: \(.usage)
 "' "$INVENTORY"
     fi
   else
@@ -56,22 +56,22 @@ show_tool() {
       local result=$(jq -r --arg cat "$cat" --arg tool "$tool" \
         '.[$cat][]? | select(.name==$tool) | 
 "Category: '"$cat"'
-Name: \\(.name)
-Location: \\(.location)
-Type: \\(.type)
-Language: \\(.language)
-Compiled By: \\(.compiled_by)
-Build Date: \\(.build_date)
-Purpose: \\(.purpose)
+Name: \(.name)
+Location: \(.location)
+Type: \(.type)
+Language: \(.language)
+Compiled By: \(.compiled_by)
+Build Date: \(.build_date)
+Purpose: \(.purpose)
 
-Usage: \\(.usage)
+Usage: \(.usage)
 
 Examples:
-\\(.examples | join(\"\\n\"))
+\(.examples | join("\n"))
 
-Documentation: \\(.documentation)
+Documentation: \(.documentation)
 
-Notes: \\(.notes)
+Notes: \(.notes)
 "' "$INVENTORY")
       
       if [ -n "$result" ]; then
